@@ -1,8 +1,7 @@
 # Belp
-This app is made for the beer lovers to express whet they believe, feel, experience, and love when they need to let the world know about the very sustance that improves and and chaanges the world around us. 
 
 ## Description <br/> 
-This App was brainstormed up while we, as students, sat in a slack channel waiting for a response on a heavy request day, but not really knowing when a response would come, or what our standing was. Enter in Tick-it, the web app that allows Thinkful TA's and students to stay organized on a transparent platform. TA's are able to keep track of requests submitted by students who need assistance with a variety of coding challenges, while students are able to keep track of the requests they have submitted and where they line up on the queue. 
+Belp was brainstormed with beer lovers in mind. We wanted a safe haven where true beer enthusists are able to come and express what they truly believe, feel, experience, and love when it comes to this revitalizing and refreshing beverage.  Belp, a web app that allows Users to research their favorite beers while leaving geniune heartfelt opinions. Users feel apart of the Belp movement as they sign in to create their own unique name and leave their own personal message about the beers they love the most.
 
 ## Technology Used <br/>
 **FrontEnd**: HTML, CSS, Javascript<br/>
