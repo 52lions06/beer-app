@@ -10,6 +10,10 @@ let appState = {
   showSearchForm: false
 };
 
+if (localStorage.loginHash){
+  appState.userlogin = true //hides information for us when we render
+}
+
 // State Modification Functions 
 
 function resetState() {
@@ -118,7 +122,8 @@ function stateRender(state) {
 
     $('.js-results').html(beerInfoTemplate).removeClass('hidden');
   } else if ( loggedIn) {
-    $('.js-loggedIn').removeClass('hidden');
+    $('.js-login-form').addClass('hidden');
+    $('.js-signup-form').addClass('hidden');
   } 
 }
  
@@ -170,7 +175,7 @@ function sendReviewData(userReview) {
     headers: {
       'Accept': 'application/json',
       'Content-Type': 'application/json',
-      'Authorization': 'Basic dGVzdHVzZXI6cGFzc3dvcmQ='
+      'Authorization': 'Basic ' + localStorage.loginHash //connect all of the endpoints that connect to the backend
     },
     method: 'PUT',
     body: JSON.stringify(formattedReview) 
@@ -189,6 +194,11 @@ function sendReviewData(userReview) {
 }
 
 // User Endpoint Functions
+function logout(){
+  delete localStorage.loginHash;
+  appState.userLoggedIn = false;
+}
+
 function loginUser(userData) {
   const loginHash = btoa(userData.username + ":" + userData.password); //we are passing this in to use the Hash on 198
   const opts = {
@@ -207,6 +217,7 @@ function loginUser(userData) {
       if (res.status === 422) {
         renderErrorMessage(res.status);
       } else {
+        localStorage.loginHash = loginHash; //everytime we are able to refresh the userHash | local storage is an object 
         updatesStateUserId(res._id);
         updatesStateUserLogin();
         stateRender(appState); 
@@ -250,6 +261,8 @@ function createUser(userData) {
 // Event Listener Functions
 
 $(function() {
+
+  stateRender(appState);
 
   $('.js-login-form').on('submit', function(event) {
     resetState();
@@ -301,6 +314,11 @@ $(function() {
   $('.js-show-results-button').on('click', function(event) {
     event.preventDefault();
     updatesStateSearchFormStatus();
+    stateRender(appState);
+  });
+
+  $('.js-logout-button').on('click', function(event) {
+    logout();
     stateRender(appState);
   });
   
