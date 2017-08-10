@@ -189,6 +189,35 @@ function sendReviewData(userReview) {
 }
 
 // User Endpoint Functions
+function loginUser(userData) {
+  const loginHash = btoa(userData.username + ":" + userData.password); //we are passing this in to use the Hash on 198
+  const opts = {
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+      'Authorization': 'Basic ' + loginHash
+    },
+    method: 'GET' 
+  };
+  fetch('/users/login', opts)
+    .then(function(res) {
+      return res.json();
+    })
+    .then(function(res) {
+      if (res.status === 422) {
+        renderErrorMessage(res.status);
+      } else {
+        updatesStateUserId(res._id);
+        updatesStateUserLogin();
+        stateRender(appState); 
+        return res;
+      }
+    })
+    .catch(err => {
+      return err;
+    });
+}
+
 
 function createUser(userData) {
   const opts = {
@@ -221,6 +250,19 @@ function createUser(userData) {
 // Event Listener Functions
 
 $(function() {
+
+  $('.js-login-form').on('submit', function(event) {
+    resetState();
+    const userFields = $('.js-login-form input');
+    event.preventDefault();
+    let userData = {};
+
+    $.each(userFields, function(i, field) {
+      userData[field.name] = field.value;
+    });
+    loginUser(userData);
+    userFields.val('');
+  });
 
   $('.js-signup-form').on('submit', function(event) {
     resetState();

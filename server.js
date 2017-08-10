@@ -181,6 +181,11 @@ app.post('/beers', (req, res) => {
       res.status(500).json({message: 'Internal server error'});
     });
 });
+app.get('/users/login', //this is what we will use for our log-in
+  passport.authenticate('basic', {session: false}),
+  (req, res) => { res.send(req.user)
+
+  });
 
 app.put('/beers/:id', 
   passport.authenticate('basic', {session: false}),
@@ -264,3 +269,4 @@ if (require.main === module) {
 }
 
 module.exports = {app, runServer, closeServer};
+

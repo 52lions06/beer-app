@@ -12,7 +12,16 @@
     <header><h1>Belp - Beer Reviews By Beer Lovers</h1></header>
     <main role="main">
         <div class="container js-starter-page">
-            <h2 class="sign-up">Sign up</h2>
+            <h2 class="login">Login</h2>
+             <form action="#" id="login-form" name="login" method="post" class="js-login-form">
+                <fieldset>
+                    <label class="input-label" for="username">Username</label>	
+                    <input class="input-box" type="text" name="username" id="username" required placeholder="myuser123">
+                    <label class="input-label" for="password">Password</label>
+                    <input class="input-box" type="password" name="password" id="password" required placeholder="A password">
+                </fieldset>
+                <button class ="button submit-button" type="submit">Login</button>
+            </form>
             <form action="#" id="signup-form" name="signup" method="post" class="js-signup-form">
                 <fieldset>
                     <label class="input-label" for="username">Username</label>	
