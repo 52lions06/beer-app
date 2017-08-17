@@ -2,19 +2,20 @@
 
 let appState = {
   beerData: {},
+  previousUserLoggedIn: false,
   userLoggedIn: false,
   userQueryInDb: false,
   reviewEntry: false,
   searchBeerId: '',
   currentUserId: '',
-  showSearchForm: false
+  showSearchForm: false,
+  userLoggedOut: null
 };
 
-if (localStorage.loginHash){
-  appState.userlogin = true //hides information for us when we render
+// State Modification Functions
+if (localStorage.loginHash) {
+  appState.previousUserLoggedIn = true;
 }
-
-// State Modification Functions 
 
 function resetState() {
   appState.reviewEntry = false;
@@ -30,6 +31,14 @@ function updatesStateSearchFormStatus() {
 function updatesStateUserLogin() {
   appState.userLoggedIn = !appState.userLoggedIn;
 }
+function updatesStatePreviousUserLogin() {
+  appState.previousUserLoggedIn = true;
+}
+function userLogout() {
+  delete localStorage.loginHash;
+  appState.previousUserLoggedIn = false;
+  appState.userLoggedOut = true;
+}
 function updatesStateUserId(userId) {
   appState.currentUserId = userId;
 }
@@ -37,7 +46,7 @@ function updatesStateBeerData(userSearchBeer) {
   appState.beerData = userSearchBeer;
 }
 
-function updatesStateQueryStatus (state) {
+function updatesStateQueryStatus(state) {
   state.userQueryInDb = true;
 }
 
@@ -51,7 +60,6 @@ function updatesStateReviewStatus() {
   } else if (appState.reviewEntry) {
     appState.reviewEntry = false;
   }
-
 }
 
 function updatesStateReviewToFalse() {
@@ -62,21 +70,29 @@ function updatesStateReviewToFalse() {
 
 function renderErrorMessage(status) {
   if (status === 200) {
-    let beerNotInDatabaseError = (`
+    let beerNotInDatabaseError = `
     <h3> The beer you searched for does not appear to be in the database. <br> Please try again. </h3>
-    `);
+    `;
     $('.js-results').html(beerNotInDatabaseError).removeClass('hidden');
   } else if (status === 422) {
-    let usernameTakenError = (`
+    let usernameTakenError = `
       <h3> That username is taken, please try a different one.</h3>
-    `);
-   
+    `;
+
     $('.js-login-error').html(usernameTakenError).removeClass('hidden');
     $('.js-loggedIn').addClass('hidden');
   }
 }
 
 function stateRender(state) {
+  console.log('User is now logged in: ' + state.userLoggedIn);
+  console.log('Previous User is now logged in: ' + state.previousUserLoggedIn);
+  if (state.userLoggedOut) {
+    $('.js-login-page').removeClass('hidden');
+    $('.js-signup-form').removeClass('hidden');
+    $('.js-previousUserLoggedIn').addClass('hidden');
+  }
+
   if (state.showSearchForm) {
     $('.js-beer-form').removeClass('hidden');
     $('.js-starter-page').addClass('hidden');
@@ -86,11 +102,12 @@ function stateRender(state) {
   $('.js-loggedIn').addClass('hidden');
 
   const { beerData } = state;
-  const loggedIn =  state.userLoggedIn;
+  const loggedIn = state.userLoggedIn;
+  const previousUserLoggedIn = state.previousUserLoggedIn;
   const reviewEntry = state.reviewEntry;
 
   if (reviewEntry) {
-    let reviewEntryTemplate = (`
+    let reviewEntryTemplate = `
       <form action="#" id="review-form" name="reviewForm" class="js-review-form">
 			<fieldset>
 				<label class="input-label" for="review">Please leave your review below: </label>
@@ -98,17 +115,19 @@ function stateRender(state) {
 			</fieldset>
 			<button class ="button submit-button" type="submit">Submit Review</button>
 		</form>
-    `);
+    `;
     $('.js-results').append(reviewEntryTemplate);
   } else if (beerData.name !== undefined) {
-    
-    let beerList = beerData.reviews.map(function(review, i) {
-      return (`
-    <li><p>${review.author.firstName} ${review.author.lastName}: ${review.comment}</p></li>
-    `);
-    }).join('');
-    
-    let beerInfoTemplate = (`
+    let beerList = beerData.reviews
+      .map(function(review, i) {
+        return `
+    <li><p>${review
+    .author.firstName} ${review.author.lastName}: ${review.comment}</p></li>
+    `;
+      })
+      .join('');
+
+    let beerInfoTemplate = `
     <h2> Beer Name: ${beerData.name}</h2
     <p> Style: ${beerData.style}</p>
     <p> ABV: ${beerData.abv}</p>
@@ -118,15 +137,23 @@ function stateRender(state) {
     <h3> Reviews: </h3>
     <ul> ${beerList} </ul>
     <button class="js-review" type="button"> Click to leave a review </button>
-    `);
+    `;
 
     $('.js-results').html(beerInfoTemplate).removeClass('hidden');
-  } else if ( loggedIn) {
-    $('.js-login-form').addClass('hidden');
+  } else if (loggedIn) {
+    $('.js-loggedIn').removeClass('hidden');
+    $('.js-show-results-button').removeClass('hidden');
+    $('.js-logout-button').removeClass('hidden');
+  } else if (previousUserLoggedIn) {
+    $('.js-previousUserLoggedIn').removeClass('hidden');
+    $('.js-show-results-button').removeClass('hidden');
+    $('.js-login-page').addClass('hidden');
     $('.js-signup-form').addClass('hidden');
-  } 
+    $('.js-signup-message').addClass('hidden');
+    $('.js-logout-button').removeClass('hidden');
+  }
 }
- 
+
 // Data Retrieval functions
 
 function fetchBeerData(userQuery) {
@@ -144,7 +171,7 @@ function fetchBeerData(userQuery) {
           updatesStateQueryStatus(appState);
           updatesStateBeerData(currentBeer);
           stateRender(appState);
-        } 
+        }
       }
       if (!appState.userQueryInDb) {
         renderErrorMessage(status);
@@ -167,18 +194,17 @@ function sendReviewData(userReview) {
         date: Date.now()
       }
     ]
-
   };
 
   // Password is hardcoded in for authorization
   const opts = {
     headers: {
-      'Accept': 'application/json',
+      Accept: 'application/json',
       'Content-Type': 'application/json',
-      'Authorization': 'Basic ' + localStorage.loginHash //connect all of the endpoints that connect to the backend
+      Authorization: 'Basic ' + localStorage.loginHash //connect all of the endpoints that connect to the backend
     },
     method: 'PUT',
-    body: JSON.stringify(formattedReview) 
+    body: JSON.stringify(formattedReview)
   };
   fetch(`/beers/${appState.searchBeerId}`, opts)
     .then(function(res) {
@@ -194,20 +220,15 @@ function sendReviewData(userReview) {
 }
 
 // User Endpoint Functions
-function logout(){
-  delete localStorage.loginHash;
-  appState.userLoggedIn = false;
-}
-
 function loginUser(userData) {
-  const loginHash = btoa(userData.username + ":" + userData.password); //we are passing this in to use the Hash on 198
+  const loginHash = btoa(userData.username + ':' + userData.password); //we are passing this in to use the Hash on 198
   const opts = {
     headers: {
-      'Accept': 'application/json',
+      Accept: 'application/json',
       'Content-Type': 'application/json',
-      'Authorization': 'Basic ' + loginHash
+      Authorization: 'Basic ' + loginHash
     },
-    method: 'GET' 
+    method: 'GET'
   };
   fetch('/users/login', opts)
     .then(function(res) {
@@ -217,10 +238,12 @@ function loginUser(userData) {
       if (res.status === 422) {
         renderErrorMessage(res.status);
       } else {
-        localStorage.loginHash = loginHash; //everytime we are able to refresh the userHash | local storage is an object 
+        // These are the function calls that were made after the code review. Need to confirm logic flow
         updatesStateUserId(res._id);
-        updatesStateUserLogin();
-        stateRender(appState); 
+        updatesStatePreviousUserLogin();
+        // updatesStateUserLogin();
+        $('.js-demo').addClass('hidden');
+        stateRender(appState);
         return res;
       }
     })
@@ -228,15 +251,14 @@ function loginUser(userData) {
       return err;
     });
 }
-
-
 function createUser(userData) {
+  const loginHash = btoa(userData.username + ':' + userData.password);
   const opts = {
     headers: {
-      'Accept': 'application/json',
+      Accept: 'application/json',
       'Content-Type': 'application/json'
     },
-    method: 'POST', 
+    method: 'POST',
     body: JSON.stringify(userData)
   };
   fetch('/users', opts)
@@ -247,9 +269,12 @@ function createUser(userData) {
       if (res.status === 422) {
         renderErrorMessage(res.status);
       } else {
+        localStorage.loginHash = loginHash;
         updatesStateUserId(res._id);
         updatesStateUserLogin();
-        stateRender(appState); 
+        $('.js-login-page').addClass('hidden');
+        $('.js-demo').addClass('hidden');
+        stateRender(appState);
         return res;
       }
     })
@@ -261,8 +286,13 @@ function createUser(userData) {
 // Event Listener Functions
 
 $(function() {
-
-  stateRender(appState);
+  // stateRender(appState);
+  $('.js-logout-button').on('click', function(event) {
+    resetState();
+    event.preventDefault();
+    userLogout();
+    stateRender(appState);
+  });
 
   $('.js-login-form').on('submit', function(event) {
     resetState();
@@ -276,7 +306,6 @@ $(function() {
     loginUser(userData);
     userFields.val('');
   });
-
   $('.js-signup-form').on('submit', function(event) {
     resetState();
     const userFields = $('.js-signup-form input');
@@ -289,7 +318,7 @@ $(function() {
     createUser(userData);
     userFields.val('');
   });
-  
+
   $('.js-beer-form').submit(function(event) {
     resetState();
     event.preventDefault();
@@ -306,7 +335,7 @@ $(function() {
 
   $('.js-results').on('submit', '.js-review-form', function(event) {
     event.preventDefault();
-    let userReview =  $('#review').val();
+    let userReview = $('#review').val();
     sendReviewData(userReview);
     $('#review').val('');
   });
@@ -316,10 +345,4 @@ $(function() {
     updatesStateSearchFormStatus();
     stateRender(appState);
   });
-
-  $('.js-logout-button').on('click', function(event) {
-    logout();
-    stateRender(appState);
-  });
-  
 });
