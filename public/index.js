@@ -11,7 +11,6 @@ let appState = {
   showSearchForm: false,
   userLoggedOut: null
 };
-
 // State Modification Functions
 if (localStorage.loginHash) {
   appState.previousUserLoggedIn = true;
@@ -85,8 +84,9 @@ function renderErrorMessage(status) {
 }
 
 function stateRender(state) {
-  console.log('User is now logged in: ' + state.userLoggedIn);
-  console.log('Previous User is now logged in: ' + state.previousUserLoggedIn);
+  console.log('hopeful: ' + localStorage.loginHash);
+  // console.log('User is now logged in: ' + state.userLoggedIn);
+  // console.log('Previous User is now logged in: ' + state.previousUserLoggedIn);
   if (state.userLoggedOut) {
     $('.js-login-page').removeClass('hidden');
     $('.js-signup-form').removeClass('hidden');
@@ -195,7 +195,7 @@ function sendReviewData(userReview) {
       }
     ]
   };
-
+  // console.log('problem is here: ' + localStorage.loginHash);
   // Password is hardcoded in for authorization
   const opts = {
     headers: {
@@ -222,6 +222,7 @@ function sendReviewData(userReview) {
 // User Endpoint Functions
 function loginUser(userData) {
   const loginHash = btoa(userData.username + ':' + userData.password); //we are passing this in to use the Hash on 198
+  console.log('login Hash' + loginHash);
   const opts = {
     headers: {
       Accept: 'application/json',
@@ -239,6 +240,8 @@ function loginUser(userData) {
         renderErrorMessage(res.status);
       } else {
         // These are the function calls that were made after the code review. Need to confirm logic flow
+        console.log('login hash here' + loginHash);
+                localStorage.loginHash = loginHash;
         updatesStateUserId(res._id);
         updatesStatePreviousUserLogin();
         // updatesStateUserLogin();
