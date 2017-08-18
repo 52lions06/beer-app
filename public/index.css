@@ -1,3 +1,136 @@
+/* http://meyerweb.com/eric/tools/css/reset/ 
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+b,
+u,
+i,
+center,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+canvas,
+details,
+embed,
+figure,
+figcaption,
+footer,
+header,
+hgroup,
+menu,
+nav,
+output,
+ruby,
+section,
+summary,
+time,
+mark,
+audio,
+video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
+  display: block;
+}
+body {
+  line-height: 1;
+}
+ol,
+ul {
+  list-style: none;
+  max-width: 58ch;
+}
+blockquote,
+q {
+  quotes: none;
+}
+blockquote:before,
+blockquote:after,
+q:before,
+q:after {
+  content: '';
+  content: none;
+}
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+
+/* Mobile */
 .hidden {
   display: none;
 }
@@ -13,7 +146,7 @@ fieldset {
 body {
   text-align: center;
   /*background-color: #6A381F;*/
-    background-image: url("/img/beer.jpg")  
+    /* background-image: url("/img/beer.jpg")   */
 }
 
 .header {
@@ -28,15 +161,15 @@ body {
     font-weight: bold;
     font-size: 18px;
     padding: 20px;
-    background-color: #62708D;
-    color: #FFFFFF;
+    background-color: #FFFFFF;
+    /* color: #FFFFFF; */
     width: 400px;
     margin:auto;
     border-radius: 25px;
 }
-   #js-review input:focus, #beer-name input:focus, .js-logged-in button:focus, #signup-form input:focus, #signup-form button:focus,.beer-form button:focus {
+   /* #js-review input:focus, #beer-name input:focus, .js-logged-in button:focus, #signup-form input:focus, #signup-form button:focus,.beer-form button:focus {
     outline: 5px dotted pink;
-   }
+   } */
 
 .results {
   margin-top: 20px;
