@@ -1,16 +1,46 @@
 .hidden {
   display: none;
 }
+
  form {
    width: 200px;
  }
 
-body {
-  text-align: center;
-  /*background: url('/img/beer.jpg') no-repeat;
-  background-size: cover;*/
+fieldset {
+   border:0 none;
 }
 
+body {
+  text-align: center;
+  /*background-color: #6A381F;*/
+    background-image: url("/img/beer.jpg")  
+}
+
+.header {
+  /*background-color: #E3D985;*/
+  background-color: #B4651A;
+  padding:10px;
+  margin-bottom: 10px;
+}
+
+.starter-page, .beer-form, .results {
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    font-size: 18px;
+    padding: 20px;
+    background-color: #62708D;
+    color: #FFFFFF;
+    width: 400px;
+    margin:auto;
+    border-radius: 25px;
+}
+   #js-review input:focus, #beer-name input:focus, .js-logged-in button:focus, #signup-form input:focus, #signup-form button:focus,.beer-form button:focus {
+    outline: 5px dotted pink;
+   }
+
+.results {
+  margin-top: 20px;
+}
 form {
   margin: auto;
   padding: 10px;
@@ -34,12 +64,4 @@ form {
 
 ul {
   list-style: none;
-}
-
-
-.results {
-  padding: 8px;
-  background-color: white;
-  width: 400px;
-  margin: auto;
 }

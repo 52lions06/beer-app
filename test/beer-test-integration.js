@@ -54,7 +54,14 @@ function tearDownDb() {
   console.warn('Deleting database');
   return mongoose.connection.dropDatabase();
 }
-function seedUser() { return User.create(myTestUser); }
+
+function seedUser() { 
+  return User.create(myTestUser)
+    .then(user => {
+      myTestUser._id = user._id;
+    });
+}
+
 describe('Beer API resource', function() {
 
   before(function() {
@@ -189,35 +196,29 @@ describe('Beer API resource', function() {
   describe('PUT endpoint', function() {
 
     it('should update fields you send over', function() {
-      const updateData = {
-        reviews: []
+      let updatedData = {
+        reviews: [{
+          comment: 'hello'}
+        ]
       };
-      // const updateData = {
-      //   name: 'fofofofofofofof',
-      //   style: 'futuristic fusion'
-      // };
 
       return Beer
         .findOne()
         .exec()
         .then(function(beer) {
-          
-          updateData.id = beer.id;
-          // make request then inspect it to make sure it reflects
-          // data we sent
+          updatedData.id = beer.id;
           return chai.request(app)
             .put(`/beers/${beer.id}`)
             .auth(myTestUser.username, myTestUser.unhashedPassword)
-            .send(updateData);
+            .send(updatedData);
         })
         .then(function(res) {
-
           res.should.have.status(204);
-          return Beer.findById(updateData.id).exec();
+          return Beer.findById(updatedData.id).exec();
         })
         .then(function(beer) {
-          // beer.name.should.equal(updateData.name);
-          // beer.style.should.equal(updateData.style);
+          const lastReview = beer.reviews[beer.reviews.length-1];
+          beer.reviews[beer.reviews.length-1].should.equal(lastReview);
         });
     });
   });
