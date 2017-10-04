@@ -149,11 +149,20 @@ body {
     /* background-image: url("/img/beer.jpg")   */
 }
 
+h1 {
+  font-size: 32px;
+}
+
 .header {
   /*background-color: #E3D985;*/
   background-color: #B4651A;
   padding:10px;
   margin-bottom: 10px;
+}
+
+form {
+  margin: auto;
+  padding: 10px;
 }
 
 .starter-page, .beer-form, .results {
@@ -163,8 +172,8 @@ body {
     padding: 20px;
     background-color: #FFFFFF;
     /* color: #FFFFFF; */
-    width: 400px;
-    margin:auto;
+    width: 50%;
+    margin: 0 auto;
     border-radius: 25px;
 }
    /* #js-review input:focus, #beer-name input:focus, .js-logged-in button:focus, #signup-form input:focus, #signup-form button:focus,.beer-form button:focus {
@@ -173,10 +182,6 @@ body {
 
 .results {
   margin-top: 20px;
-}
-form {
-  margin: auto;
-  padding: 10px;
 }
 
 .sign-up {
