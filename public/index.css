@@ -65,3 +65,7 @@ form {
 ul {
   list-style: none;
 }
+
+@media only screen and (max-width: 479px) {
+   .starter-page{ width: 320px; margin-top: 20px}
+}
